@@ -37,7 +37,7 @@ buildAndInvokeCppEngine()
 buildAndInvokeCppEngine_manual()
 {
 	echo "Building C++ regex engine"
-	g++ regex_engine.cpp -std=c++11 -o regex_engine.out
+	g++ regex_engine.cpp input_parameter.cpp utils.cpp input_parameter_value.cpp -std=c++11 -o regex_engine.out
 	echo "Running C++ regex engine"
 	./regex_engine.out find_layout.tmp/extracted_lines.tmp
 }
