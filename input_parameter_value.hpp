@@ -2,7 +2,7 @@
 #define INPUT_PARAMETER_VALUE_HPP
 
 
-class InputParameterValue
+class InputParameterValue // Only an (pure) abstract class, defining interface...
 {
 public:
 	//virtual ~InputParameterValue(); // Doing nothing currently, might be needed later...
@@ -45,12 +45,13 @@ private:
 };
 
 
-//InputParameterType::REGEX
 class InputParameterRegex : public InputParameterValue
 {
 public:
 	InputParameterRegex(std::string parameterValue);
-	std::regex value_m; // Should be private
+
+private:
+	std::regex value_m;
 
 };
 
@@ -70,7 +71,7 @@ class InputParameterString : public InputParameterValue
 public:
 	InputParameterString(std::string parameterValue);
 
-	// TODO: Should be private!
+private:
 	std::string value_m;
 };
 

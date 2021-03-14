@@ -30,7 +30,7 @@ std::string bitfieldOutput;
 std::string output;
 
 // x-ambles
-std::string preamble = "#ifdef debugA\n";
+std::string preamble = "#ifdef debug\n";
 std::string interamble = "#else\n";
 std::string postamble = "#endif\n";
 
