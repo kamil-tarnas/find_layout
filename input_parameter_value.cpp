@@ -25,6 +25,9 @@ InputParameterBoolean::InputParameterBoolean(std::string parameterValue)
 }
 
 
+//InputParameterBoolean::~InputParameterBoolean() {}
+
+
 //InputParameterType::REGEX
 InputParameterRegex::InputParameterRegex(std::string parameterValue)
 {
@@ -39,6 +42,9 @@ InputParameterRegex::InputParameterRegex(std::string parameterValue)
 		// throw
 	}
 }
+
+
+//InputParameterRegex::~InputParameterRegex() {}
 
 
 InputParameterInteger::InputParameterInteger(std::string parameterValue)
@@ -57,6 +63,9 @@ InputParameterInteger::InputParameterInteger(std::string parameterValue)
 }
 
 
+//InputParameterInteger::~InputParameterInteger() {}
+
+
 InputParameterString::InputParameterString(std::string parameterValue)
 {
 	if (parameterValue.at(0) == '\"')
@@ -71,3 +80,5 @@ InputParameterString::InputParameterString(std::string parameterValue)
 	}
 }
 
+
+//InputParameterString::~InputParameterString() {}

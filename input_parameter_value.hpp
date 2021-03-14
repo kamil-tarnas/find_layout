@@ -2,10 +2,10 @@
 #define INPUT_PARAMETER_VALUE_HPP
 
 
-class InputParameterValue
+class InputParameterValue // Only an (pure) abstract class, defining interface...
 {
 public:
-	//virtual ~InputParameterValue(); // Doing nothing currently, might be needed later...
+	virtual ~InputParameterValue() = default; // Doing nothing currently, might be needed later...
 //	virtual std::string GetName();
 //	virtual InputParameterType GetType();
 	//static InputParameterType parameterType; -> would be implicit
@@ -39,18 +39,21 @@ class InputParameterBoolean : public InputParameterValue
 {
 public:
 	InputParameterBoolean(std::string parameterValue);
+	virtual ~InputParameterBoolean() = default;
 
 private:
 	bool value_m;
 };
 
 
-//InputParameterType::REGEX
 class InputParameterRegex : public InputParameterValue
 {
 public:
 	InputParameterRegex(std::string parameterValue);
-	std::regex value_m; // Should be private
+	virtual ~InputParameterRegex() = default;
+
+private:
+	std::regex value_m;
 
 };
 
@@ -59,6 +62,7 @@ class InputParameterInteger : public InputParameterValue
 {
 public:
 	InputParameterInteger(std::string parameterValue);
+	virtual ~InputParameterInteger() = default;
 
 private:
 	int value_m;
@@ -69,8 +73,9 @@ class InputParameterString : public InputParameterValue
 {
 public:
 	InputParameterString(std::string parameterValue);
+	virtual ~InputParameterString() = default;
 
-	// TODO: Should be private!
+private:
 	std::string value_m;
 };
 

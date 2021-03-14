@@ -11,78 +11,32 @@
 #include "input_parameter_value.hpp"
 
 
-// TODO: Must create InputParameterValue hierarchy (with an pure abstract class?) that could call the right destructors
-// when the times comes...
-
-
-// TODO: This needs to be just the
-// TODO: Ill formed because of the constructor? Need to implement the destructor for such cases?
-// TODO: std::any or std::variant for value of the parameter?
-struct InputParameterArrayElement  //TODO: Make this a hierarchy of parameters? This would make the vector to be a vector of pointers...
-{
-	std::string parameterName_m;
-	InputParameterType parameterType_m;
-	// TODO: Let's do the MVP now and make it a pointer, slow, but works (also,
-	//       there are possibly other, more slow things in current implementation)
-	InputParameterValue* parameterValue_mp; //Here
-
-	//[[left]] Constructor taking initializer_list would be needed for this...
-	//public:
-//	InputParameterArrayElement(InputParameterValue* inputValue_p, std::string parameterName, InputParameterType parameterType) :
-//		parameterValue_mp(inputValue_p),
-//        parameterName_m(parameterName),
-//		parameterType_m(parameterType)
-//	{
-//
-//	}
-//
-//	// TODO: Something of a dead end - need to have a virtual destructor here
-//	~InputParameterArrayElement()
-//	{
-//		switch (parameterType_m)
-//		{
-//			// TODO: Have custom functions overloaded based on the InputParameterType value...
-//			case InputParameterType::REGEX:
-//			{
-//				parameterValue_m.regex.~basic_regex();
-//				break;
-//			}
-//			case InputParameterType::STRING:
-//			{
-//				parameterValue_m.string.~basic_string();
-//				break;
-//			}
-//			default:
-//			{
-//				// Trivial types - no need to call any destructors...
-//			}
-//
-//	}
-};
-
-
-#define NUMBER_OF_PARAMETERS 10
-
-// TODO: an array of InputParameterValue pointers?
-// TODO: ParamArray would be a set of values for a quicker search?
-// TODO: Let's not do int in the MVP...
-using ParamArray = std::array<InputParameterArrayElement, NUMBER_OF_PARAMETERS>; //Array of InputParameter?
-
-
 class InputParameter // TODO: Virtual or abstract class... depending on that - call a proper function to extract value
 {
 public:
+	static constexpr unsigned numOfParameters = 10;
 
-	static const InputParameter dummy;
-	// TODO: This could be made 'private' //TODO: A type which contains itself - that is also not possible?
+	using ParamArray = std::array<InputParameter, numOfParameters>;
+
 	static ParamArray parameters;
 
-	bool AssignParameterValue(std::string parameterValue, std::string parameterName, InputParameterType parameterType)
+	bool AssignParameterValue(std::string parameterValue)
 	{
 		// Polimorphic type that would get the dynamicly-typed object in following cases
 		InputParameterValue* parameterToBeAssigned = nullptr;
 
+
 		// TODO: Have a return value instead of multiple returns...
+
+		// TODO: just just typeid:
+		/*
+		 * #include <typeinfo>
+
+			...
+			string s = typeid(YourClass).name()
+		 */
+
+		// Useful in many places - extract to a separate entity...
 		switch (parameterType_m)
 		{
 			// TODO: Have custom functions overloaded based on the InputParameterType value... (possible?)
@@ -118,30 +72,28 @@ public:
 			}
 		}
 
-		if (parameterToBeAssigned) // if the object was created... /// We are inside the constructor of the object here...
-		{ //Why not just the InputParameter...?
-			// Just assign the value - object constuction is self-contained...
+		/// We are inside the constructor of the object here...
+		if (parameterToBeAssigned) // if the object was created...
+		{
+			unsigned parameterIndexInArray = 0;
 
-			// BELOW MISSLEADING!!!!!!!!
-//			//using ParamArray = std::array<InputParameterArrayElement, NUMBER_OF_PARAMETERS>;
-//			for (auto& parameter: parameters)
-//			{
-//				//TODO: Get type or something - identify it by the things we already have...
-//				//parameterToBeAssigned->InputParameterValue
-//				// Okay, having separate operator== for that
-//				if (*parameterToBeAssigned == parameter) // TODO: A bit dangerous overall, with pointers juggling
-//				{
-//					// Assign just the pointer - don't modify another fields
-//					// TODO: Make it mutable - make only the pointer assignable
-//					parameter.parameterValue_mp = parameterToBeAssigned;
-//				}
-//			}
-//			// TODO: Here we need to write it to the array (static array of values?)
-
-			//[[left]] Need to create just the InputParameter element instead of this workaround
-//			InputParameterArrayElement element =
-//					InputParameterArrayElement(parameterToBeAssigned, parameterName, parameterType);
-			// Push to the array?
+			for (auto& parameter: parameters)
+			{
+				// Check both parameter name and parameters type
+				// TODO: Probably is redundand and guaranteed to match already...
+				if (this->parameterName_m == parameter.parameterName_m &&
+					this->parameterType_m == parameter.parameterType_m)
+				{
+					// Assign just the pointer - don't modify another fields
+					this->parameterValue_mp = parameterToBeAssigned;
+					break;
+				}
+				parameterIndexInArray++;
+			}
+			// Everything is successful at this point, push the constructed parameter into the array
+			// TODO: Move? Can it be moved? "this" pointer is const? Needs move assignment operator?
+			// Can "this" pointer be moved, can it be an r-value?
+			parameters[parameterIndexInArray] = std::move(*this);
 
 			return true;
 		}
@@ -177,14 +129,7 @@ public:
 			// Inherit the type from parameters array
 			parameterType_m = parameterType;
 
-			AssignParameterValue(parameterValue, parameterName, parameterType);
-
-			// If was found then read the value
-			// Based on the value std::string parameterValue
-			// Dispatch proper function and save the value...
-			// Here add it...
-
-
+			AssignParameterValue(parameterValue);
 		}
 		else
 		{
@@ -192,27 +137,95 @@ public:
 		}
 	}
 
-	std::string GetName()
+
+	// This ctor would be intially called when constucting the array of values
+	// Should take it by the moves? Constexpr string might be a improvement...
+	InputParameter(std::string&& parameterName, InputParameterType parameterType) :
+		parameterName_m(std::move(parameterName)),
+		parameterType_m(parameterType),
+		parameterValue_mp(nullptr)
 	{
-		return parameterName_m;
+
 	}
 
-	InputParameterType GetType()
+
+	InputParameter& operator=(InputParameter&& rhs) //TODO: We could have run-time errors in case of dismatches...
 	{
-		return parameterType_m;
+		// We could not even bother with assigning the parameters to
+		// the object that is being created with InputParameter default constructor
+		// (the one called from ReadParams), but lets copy the content anyway
+		parameterName_m = std::move(rhs.parameterName_m); //TODO: [[left]] Why copy if I can move? Why does it crash?
+		parameterType_m = rhs.parameterType_m;
+
+		// The parameterValue_mp is guaranteed to be a nullptr at the point
+		// of calling the move assignment operator, but swap the pointers
+		// anyway, it would be at maximum one move (value assignment) more
+		// and could prevent from memory leaks in the future
+		InputParameterValue* tmp = parameterValue_mp;
+		parameterValue_mp = rhs.parameterValue_mp;
+		rhs.parameterValue_mp = tmp;
+		return *this;
 	}
 
-	// Name and type must match to be the same value-semantics wise
-	// This allows to have parameters of the same name and differents types
-	// TODO: Check if there are any limitations in the rest of code
-	//       that could restrict that
-	// TODO: This could be implemented in other way
-	//       Have reflections - if the type is so and so
-	// NEEDS SOME REWORKING
-//	bool operator==(const InputParameterValue& lhs, const InputParameterArrayElement& rhs)
+	//TODO: [[left]] This is needed for InputParameter::parameters initialization, but why?
+	// Only the input string r-valued constructor seems to be called...
+	InputParameter(const InputParameter& rhs) = default; // What for then if move constructor is called?
+
+
+	~InputParameter()
+	{
+		// Not having the virtual destructor is UB in the case of InputParameterValue, but...
+		// The dtor is not even needed for the mem-leak sake
+		// All of heap-allocated and stack allocated InputParameter objects have parameterValue_mp
+		// set to nulltpr, so the delete is noop
+		// In case of static allocations - the heap would be teared down with the program exit
+
+		delete parameterValue_mp;
+	}
+
+
+//	InputParameter(const InputParameter& rhs) :
+//		parameterName_m(rhs.parameterName_m),
+//		parameterType_m(rhs.parameterType_m)
 //	{
-//		rhs.parameterName_m
-//	    //return lhs.GetName() == rhs.parameterName_m && lhs.GetType() == rhs.parameterType_m;
+//		InputParameterValue* parameterToBeAssigned = nullptr;
+//
+//
+//		// Quite nice - but needs special constructors on the InputParameterType class
+//		switch (parameterType_m)
+//		{
+//			// TODO: Have custom functions overloaded based on the InputParameterType value... (possible?)
+//			case InputParameterType::BOOLEAN:
+//			{
+//				parameterToBeAssigned = new InputParameterBoolean(parameterValue);
+//				break;
+//			}
+//			case InputParameterType::INTEGER:
+//			{
+//				//Assign the value...
+//				parameterToBeAssigned = new InputParameterInteger(parameterValue);
+//				break;
+//			}
+//			case InputParameterType::REGEX:
+//			{
+//				// Just accept everything passed as a regex string?
+//				// TODO: What to do with the escape characters?
+//
+//				parameterToBeAssigned = new InputParameterRegex(parameterValue);
+//
+//				break;
+//			}
+//			case InputParameterType::STRING:
+//			{
+//				// Write the parameter value
+//				parameterToBeAssigned = new InputParameterString(parameterValue);
+//				break;
+//			}
+//			default:
+//			{
+//				//throw
+//			}
+//		}
 //	}
 
 private:
@@ -221,6 +234,8 @@ private:
 	// TODO: If we are about to develop a class hierarchy then it should not contain the parameterType variable,
 	// the parameter information type needs to be embedded in the dynamic type of the object
 	InputParameterType parameterType_m;
+
+	InputParameterValue* parameterValue_mp;
 	// Also value here??
 	// yup
 
@@ -233,30 +248,22 @@ private:
 // the parameter as the second value (typeof (GCC specific extension (do not use), typeid (okay?), decltype and so on...)?
 // TODO: Have values or default values...
 // TODO: Currently cannot be constexpr - is having string typed member variables...
-ParamArray InputParameter::parameters = //TODO: Remove const, maybe make mutable in the future...
-{{
-	{"preamble", InputParameterType::STRING}, // static reflections to compare types?
-	{"interamble", InputParameterType::STRING},
-	{"postamble", InputParameterType::STRING},
-	{"alignment", InputParameterType::INTEGER},
-	{"ignore", InputParameterType::REGEX},
-	{"indent", InputParameterType::STRING},
-	{"padding", InputParameterType::STRING},
-	{"files", InputParameterType::REGEX}, //???
-	{"prefix", InputParameterType::STRING},
-	{"mirror", InputParameterType::BOOLEAN}
-}};
-
-const InputParameter InputParameter::dummy("cos", "cos");
-
-// TODO: Default values of the parameters?
-//
-
-// This should be wrappen in InputParameter class with static variables
-void MatchParameterName();
-void ProcessParameter();
+InputParameter::ParamArray InputParameter::parameters = //TODO: Remove const, maybe make mutable in the future...
+{
+	InputParameter(std::string("preamble"), InputParameterType::STRING), // static reflections to compare types?
+	InputParameter(std::string("interamble"), InputParameterType::STRING),
+	InputParameter(std::string("postamble"), InputParameterType::STRING),
+	InputParameter(std::string("alignment"), InputParameterType::INTEGER),
+	InputParameter(std::string("ignore"), InputParameterType::REGEX),
+	InputParameter(std::string("indent"), InputParameterType::STRING),
+	InputParameter(std::string("padding"), InputParameterType::STRING),
+	InputParameter(std::string("files"), InputParameterType::REGEX), //???
+	InputParameter(std::string("prefix"), InputParameterType::STRING),
+	InputParameter(std::string("mirror"), InputParameterType::BOOLEAN)
+};
 
 
+// Free function that is befriended with the InputParameter?
 bool ReadParams() // A static function of InputParameter class?
 {
 	std::ifstream settings;
@@ -291,12 +298,16 @@ bool ReadParams() // A static function of InputParameter class?
 
 			// TODO: OBJECT ORIIENTED DISPACTH OF THE PROPER VALUE EXTRACION - OR JUST USE FUNCTION POINTERS
 
+			// Read params would just check the syntax of parameter
+			// The c-tor would be responsible for actually checking the value...
 			try
 			{
+				//[[left]] Any side effect of that? Is the destructor called? Is the object unusable? XD
 				//[[left]] succesfully creating an object means also succesflully pushed element to the array?
 				InputParameter parameter(parameterName, parameterValue); //Push to the array?
 			}
-			catch (...) // Bad name or bad value of parameter...
+			catch (...) // Bad name or bad value of parameter... Catch and continue? Do not process the parameter
+			// print some error meassage to stderr?
 			{
 
 			}
