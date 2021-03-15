@@ -570,9 +570,26 @@ void ProcessExtractedLines(std::ifstream& logFile)
 }
 
 
+void OverwriteInputParams()
+{
+	// Needs good interface for getting the values from InputParameter::parameters
+	// Type erasure?
+	// All of that are string parameters
+
+	preamble = "#ifdef debug\n";
+	interamble = "#else\n";
+	postamble = "#endif\n";
+
+	padding = "u16";
+	indent = "  ";
+}
+
+
 int main(int argc, char* argv[])
 {
 	ReadParams();
+
+	OverwriteInputParams();
 
 	std::ifstream logFile;
 

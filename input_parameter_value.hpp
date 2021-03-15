@@ -6,8 +6,21 @@ class InputParameterValue // Only an (pure) abstract class, defining interface..
 {
 public:
 	virtual ~InputParameterValue() = default; // Doing nothing currently, might be needed later...
-//	virtual std::string GetName();
-//	virtual InputParameterType GetType();
+
+	// Does not have the member variable - Variable template and specialize in
+	// the derived types?
+//protected:
+//	template<typename T>
+//	T GetParameterValue()
+//	{
+//		return value_m;
+//	}
+
+	// TODO: Type erasure? How to get the value?
+	//	virtual std::string GetName();
+
+
+	//	virtual InputParameterType GetType();
 	//static InputParameterType parameterType; -> would be implicit
 	// TODO: Cannot create GetValue() - the return type is not known at this point?
 	// We can have virtual setter (perhaps, the parameters would be different (???)
@@ -41,6 +54,8 @@ public:
 	InputParameterBoolean(std::string parameterValue);
 	virtual ~InputParameterBoolean() = default;
 
+	bool GetParameterValue();
+
 private:
 	bool value_m;
 };
@@ -51,6 +66,8 @@ class InputParameterRegex : public InputParameterValue
 public:
 	InputParameterRegex(std::string parameterValue);
 	virtual ~InputParameterRegex() = default;
+
+	std::regex GetParameterValue();
 
 private:
 	std::regex value_m;
@@ -64,6 +81,8 @@ public:
 	InputParameterInteger(std::string parameterValue);
 	virtual ~InputParameterInteger() = default;
 
+	int GetParameterValue();
+
 private:
 	int value_m;
 };
@@ -74,6 +93,8 @@ class InputParameterString : public InputParameterValue
 public:
 	InputParameterString(std::string parameterValue);
 	virtual ~InputParameterString() = default;
+
+	std::string GetParameterValue();
 
 private:
 	std::string value_m;

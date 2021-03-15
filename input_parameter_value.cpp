@@ -9,7 +9,7 @@
 // TODO: Wouldn't it be useless - we could not call get or set methods anyway?
 InputParameterBoolean::InputParameterBoolean(std::string parameterValue)
 {
-	// This could be moved to the parameter constuctor of InputParameterBoolean and could throw from there...
+	// This could be moved to the parameter constructor of InputParameterBoolean and could throw from there...
 	if (parameterValue == "true")
 	{
 		value_m = true;
@@ -22,6 +22,12 @@ InputParameterBoolean::InputParameterBoolean(std::string parameterValue)
 	{
 		// throw
 	}
+}
+
+
+bool InputParameterBoolean::GetParameterValue()
+{
+	return value_m;
 }
 
 
@@ -44,6 +50,12 @@ InputParameterRegex::InputParameterRegex(std::string parameterValue)
 }
 
 
+std::regex InputParameterRegex::GetParameterValue()
+{
+	return value_m;
+}
+
+
 //InputParameterRegex::~InputParameterRegex() {}
 
 
@@ -63,6 +75,12 @@ InputParameterInteger::InputParameterInteger(std::string parameterValue)
 }
 
 
+int InputParameterInteger::GetParameterValue()
+{
+	return value_m;
+}
+
+
 //InputParameterInteger::~InputParameterInteger() {}
 
 
@@ -78,6 +96,12 @@ InputParameterString::InputParameterString(std::string parameterValue)
 	{
 		// throw
 	}
+}
+
+
+std::string InputParameterString::GetParameterValue()
+{
+	return value_m;
 }
 
 
