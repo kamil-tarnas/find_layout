@@ -2,9 +2,15 @@
 #include <regex>
 
 #include "input_parameter_value.hpp"
+#include "input_parameter.hpp"
 #include "utils.hpp"
 
 
+
+bool InputParameterValue::GetParameterValue(std::string name)
+{
+	return false; //[[left]] Remove, make InputParameterValue a pure abstract class...
+}
 //InputParameterType::BOOLEAN // TODO: Static member variable of InputParameterType? //-> would be implicit
 // TODO: Wouldn't it be useless - we could not call get or set methods anyway?
 InputParameterBoolean::InputParameterBoolean(std::string parameterValue)
@@ -25,8 +31,11 @@ InputParameterBoolean::InputParameterBoolean(std::string parameterValue)
 }
 
 
-bool InputParameterBoolean::GetParameterValue()
+bool InputParameterBoolean::GetParameterValue(std::string name)
 {
+	InputParameter::GetParameterValue(name);
+
+	// InputParameterValue* GetParameterValue(InputParameterName name)
 	return value_m;
 }
 

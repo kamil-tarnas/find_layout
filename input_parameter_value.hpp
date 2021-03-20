@@ -1,19 +1,22 @@
 #ifndef INPUT_PARAMETER_VALUE_HPP
 #define INPUT_PARAMETER_VALUE_HPP
 
-
-//https://cpp-polska.pl/post/czym-jest-stdvariantij
-class InputParameterUnion
-{
-
-};
+#include <typeinfo>
+#include <cassert>
 
 
+//[[left]] Make this FRICKEN THING PURE ABSTRACT!!!!!!!!!
 class InputParameterValue // Only an (pure) abstract class, defining interface...
 {
 public:
 	virtual ~InputParameterValue() = default; // Doing nothing currently, might be needed later...
 
+	// An union of all of the classes that inherit from this base class?
+	// Would that be a good design? Maybe? Lets try it?
+	// so: std::sting InputParameter
+	// Make the funtion for getting arguments a template function template with specialization?
+
+	virtual bool GetParameterValue(std::string name);
 	// Does not have the member variable - Variable template and specialize in
 	// the derived types?
 //protected:
@@ -61,7 +64,11 @@ public:
 	InputParameterBoolean(std::string parameterValue);
 	virtual ~InputParameterBoolean() = default;
 
-	bool GetParameterValue();
+	// Get parameter value cannot be override BUT we can return a generic union type of bool, regex and so on...
+	// That would get converted to the "real" value...
+	// But we are relying on the functionality of getting the right pointer...
+	virtual bool GetParameterValue(std::string name) override;
+	//bool GetParameterValue(); //[[left]]
 
 private:
 	bool value_m;
@@ -105,6 +112,116 @@ public:
 
 private:
 	std::string value_m;
+};
+
+
+//https://cpp-polska.pl/post/czym-jest-stdvariantij
+class InputParameterUnion
+{
+	//typedef decltype int_type;
+	// References to the typeid thing?
+	//enum class InputParameterValueType { NUM, STR, VEC };
+	// Does the type need to be known internally? Probably not.
+
+	// Ony copy constructor and a 'normal' ctor is needed?
+private:
+	union
+	{
+		bool boolean_m;
+		std::regex regex_m;
+		std::string string_m;
+		int integer_m;
+	};
+
+};
+
+struct A {
+  enum class Type { NUM, STR, VEC };
+  Type type;
+  A(int i_) : type(Type::NUM), i(i_) {}
+
+  A(const std::string& s_) : type(Type::STR) {
+    new ((void*)&s) std::string(s_);
+  }
+
+  A(const std::vector<A>& v_) : type(Type::VEC) {
+    new ((void*)&v) std::vector<A>(v_);
+  }
+
+  A(const A& a) : type(a.type) {
+    switch (type) {
+      case Type::NUM:
+        i = a.i;
+        break;
+      case Type::STR:
+        new ((void*)&s) std::string(a.s);
+        break;
+      case Type::VEC:
+        new ((void*)&v) std::vector<A>(a.v);
+        break;
+    }
+  }
+
+  A& operator=(const A& a) {
+    switch (type) {
+      case Type::STR:
+        s.~basic_string<char>();
+        break;
+      case Type::VEC:
+        v.~vector<A>();
+        break;
+      case Type::NUM:
+        break;
+    }
+    type = a.type;
+    switch (type) {
+      case Type::NUM:
+        i = a.i;
+        break;
+      case Type::STR:
+        new ((void*)&s) std::string(a.s);
+        break;
+      case Type::VEC:
+        new ((void*)&v) std::vector<A>(a.v);
+        break;
+    }
+    return *this;
+  }
+
+  ~A() {
+    switch (type) {
+      case Type::STR:
+        s.~basic_string<char>();
+        break;
+      case Type::VEC:
+        v.~vector<A>();
+        break;
+      case Type::NUM:
+        break;
+    }
+  }
+
+  int& getInt() {
+    assert(Type::NUM == type);
+    return i;
+  };
+
+  std::string& getString() {
+    assert(Type::STR == type);
+    return s;
+  };
+
+  std::vector<A>& getVec() {
+    assert(Type::VEC == type);
+    return v;
+  };
+
+ private:
+  union {
+    int i;
+    std::string s;
+    std::vector<A> v;
+  };
 };
 
 

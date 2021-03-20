@@ -30,7 +30,6 @@ private:
 	mutable unsigned elemIndex_m; // Index in std::map instead of std::array?
 };
 
-
 class InputParameter
 {
 public:
@@ -42,37 +41,41 @@ public:
 
 	bool AssignParameterValue(std::string parameterValue);
 
-	template<typename T> // That could happen at compile time - if we have the array being constexpr
-	// do we have a constexpr map?
-	static T GetParameterValue(InputParameterName name)
-	{
-		InputParameterValue* parameterValue_p = (InputParameter::parameters[name].parameterValue_mp);
+//	template<typename T> // That could happen at compile time - if we have the array being constexpr
+//	// do we have a constexpr map?
+//	static T GetParameterValue(InputParameterName name) //would be called by the getting functionality, then, returning
+//	// the union which would be implicitly converted to a value...
+//	{
+//		InputParameterValue* parameterValue_p = (InputParameter::parameters[name].parameterValue_mp);
+//
+//		switch (name.GetType())
+//		{
+//			// TODO: So much redundancy going on here...
+//			case InputParameterType::BOOLEAN:
+//			{
+//				return static_cast<InputParameterBoolean*>(parameterValue_p)->GetParameterValue();
+//			}
+//			case InputParameterType::INTEGER:
+//			{
+//				return static_cast<InputParameterInteger*>(parameterValue_p)->GetParameterValue();
+//			}
+//			case InputParameterType::REGEX:
+//			{
+//				return static_cast<InputParameterRegex*>(parameterValue_p)->GetParameterValue();
+//			}
+//			case InputParameterType::STRING:
+//			{
+//				return static_cast<InputParameterString*>(parameterValue_p)->GetParameterValue();
+//			}
+//			default:
+//			{
+//				//throw
+//			}
+//		}
+//	}
 
-		switch (name.GetType())
-		{
-			// TODO: So much redundancy going on here...
-			case InputParameterType::BOOLEAN:
-			{
-				return static_cast<InputParameterBoolean*>(parameterValue_p)->GetParameterValue();
-			}
-			case InputParameterType::INTEGER:
-			{
-				return static_cast<InputParameterInteger*>(parameterValue_p)->GetParameterValue();
-			}
-			case InputParameterType::REGEX:
-			{
-				return static_cast<InputParameterRegex*>(parameterValue_p)->GetParameterValue();
-			}
-			case InputParameterType::STRING:
-			{
-				return static_cast<InputParameterString*>(parameterValue_p)->GetParameterValue();
-			}
-			default:
-			{
-				//throw
-			}
-		}
-	}
+	//constexpr?
+	static InputParameterValue* GetParameterValue(InputParameterName name);
 
 	InputParameter(std::string parameterName, std::string parameterValue);
 

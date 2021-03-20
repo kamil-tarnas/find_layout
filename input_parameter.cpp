@@ -11,6 +11,16 @@
 #include "input_parameter_value.hpp"
 
 
+InputParameterValue* InputParameter::GetParameterValue(InputParameterName name)
+//would be called by the getting functionality, then, returning
+// the union which would be implicitly converted to a value...
+{
+	return (InputParameter::parameters[name].parameterValue_mp);
+	//This would return the pointer to a InputParameterValue
+	// And we know that this is a polimorphic object...
+}
+
+
 bool InputParameter::AssignParameterValue(std::string parameterValue)
 {
 	// Polimorphic type that would get the dynamicly-typed object in following cases
@@ -201,6 +211,13 @@ InputParameter::ParamArray InputParameter::parameters = //TODO: Remove const, ma
 	InputParameter(std::string("prefix"), InputParameterType::STRING),
 	InputParameter(std::string("mirror"), InputParameterType::BOOLEAN)
 };
+
+//What we can do is to search the parameter in the array (base on name - probably it is somewhere already..) and just return the
+//pointer to the proper value - specified by InputParameterType...
+// What is wrong with that? Getting the right pointer type is a flaw here...
+// What we want to do is to have a constexpr if?
+// constexpr and templates?
+//
 
 
 InputParameterName::operator unsigned() const
