@@ -11,7 +11,7 @@ bool OpenFile(std::ifstream& logFile, char* logFilename)
 
   if (logFile.is_open())
   {
-    std::cout << logFilename << " file opened successfully\n";
+    std::cout << "'" << logFilename << "' file opened successfully\n";
     return true;
   }
   else
