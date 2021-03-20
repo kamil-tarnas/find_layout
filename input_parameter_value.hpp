@@ -2,6 +2,13 @@
 #define INPUT_PARAMETER_VALUE_HPP
 
 
+//https://cpp-polska.pl/post/czym-jest-stdvariantij
+class InputParameterUnion
+{
+
+};
+
+
 class InputParameterValue // Only an (pure) abstract class, defining interface...
 {
 public:

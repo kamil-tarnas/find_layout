@@ -42,7 +42,8 @@ public:
 
 	bool AssignParameterValue(std::string parameterValue);
 
-	template<typename T>
+	template<typename T> // That could happen at compile time - if we have the array being constexpr
+	// do we have a constexpr map?
 	static T GetParameterValue(InputParameterName name)
 	{
 		InputParameterValue* parameterValue_p = (InputParameter::parameters[name].parameterValue_mp);
