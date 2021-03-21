@@ -16,7 +16,7 @@ public:
 	// so: std::sting InputParameter
 	// Make the funtion for getting arguments a template function template with specialization?
 
-	virtual bool GetParameterValue(std::string name);
+	virtual std::string GetParameterValue(std::string name);
 	// Does not have the member variable - Variable template and specialize in
 	// the derived types?
 //protected:
@@ -64,12 +64,6 @@ public:
 	InputParameterBoolean(std::string parameterValue);
 	virtual ~InputParameterBoolean() = default;
 
-	// Get parameter value cannot be override BUT we can return a generic union type of bool, regex and so on...
-	// That would get converted to the "real" value...
-	// But we are relying on the functionality of getting the right pointer...
-	virtual bool GetParameterValue(std::string name) override;
-	//bool GetParameterValue(); //[[left]]
-
 private:
 	bool value_m;
 };
@@ -108,7 +102,11 @@ public:
 	InputParameterString(std::string parameterValue);
 	virtual ~InputParameterString() = default;
 
-	std::string GetParameterValue();
+	// Get parameter value cannot be override BUT we can return a generic union type of bool, regex and so on...
+	// That would get converted to the "real" value...
+	// But we are relying on the functionality of getting the right pointer...
+	virtual std::string GetParameterValue(std::string name) override;
+	//bool GetParameterValue(); //[[left]]
 
 private:
 	std::string value_m;

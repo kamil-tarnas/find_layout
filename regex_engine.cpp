@@ -7,6 +7,7 @@
 #include <array>
 
 #include "input_parameter.hpp"
+#include "input_parameter_value.hpp"
 #include "utils.hpp"
 
 std::string info;
@@ -576,7 +577,8 @@ void OverwriteInputParams()
 	// Type erasure?
 	// All of that are string parameters
 
-	preamble = "#ifdef debug\n";
+	InputParameterValue* ptr = InputParameter::GetParameterValue(std::string("preamble"));
+	preamble = ptr->GetParameterValue(std::string("preamble")) + "\n";
 	interamble = "#else\n";
 	postamble = "#endif\n";
 

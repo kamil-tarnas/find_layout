@@ -7,9 +7,9 @@
 
 
 
-bool InputParameterValue::GetParameterValue(std::string name)
+std::string InputParameterValue::GetParameterValue(std::string name)
 {
-	return false; //[[left]] Remove, make InputParameterValue a pure abstract class...
+	return ""; //[[left]] Remove, make InputParameterValue a pure abstract class...
 }
 //InputParameterType::BOOLEAN // TODO: Static member variable of InputParameterType? //-> would be implicit
 // TODO: Wouldn't it be useless - we could not call get or set methods anyway?
@@ -31,10 +31,10 @@ InputParameterBoolean::InputParameterBoolean(std::string parameterValue)
 }
 
 
-bool InputParameterBoolean::GetParameterValue(std::string name)
-{
-	InputParameter::GetParameterValue(name);
 
+
+std::string InputParameterString::GetParameterValue(std::string name)
+{
 	// InputParameterValue* GetParameterValue(InputParameterName name)
 	return value_m;
 }
@@ -95,11 +95,13 @@ int InputParameterInteger::GetParameterValue()
 
 InputParameterString::InputParameterString(std::string parameterValue)
 {
-	if (parameterValue.at(0) == '\"')
+	if (parameterValue.at(0) == '\"') // TODO: That is a very weak evaluation
 	{
+		// TODO: Need to have at least two characters...
+		value_m = parameterValue.substr(1, parameterValue.size() - 2);
 		// Write the parameter value
 		// TODO: Remove the quotes? ""?
-		value_m = parameterValue;
+		//value_m = parameterValue;
 	}
 	else
 	{
@@ -108,10 +110,6 @@ InputParameterString::InputParameterString(std::string parameterValue)
 }
 
 
-std::string InputParameterString::GetParameterValue()
-{
-	return value_m;
-}
 
 
 //InputParameterString::~InputParameterString() {}

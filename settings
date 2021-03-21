@@ -1,28 +1,32 @@
 # '#' character is used for comments - like in Bash
 # '*' character is a wildcart character, ".*" is the regex equivalence # TODO: Only regex support for now
+# Write down the reuirements of strings and other values
 
 # set x-ambles, the strings to be printed before, in-between and after the group of bitfields
-preamble=#ifdef DEBUG
-interamble=#else
-postamble=#endif
+preamble="#ifdef DEBUG"
+interamble="#else"
+postamble="#endif" 
+#TODO: Is not found globally - thats probably a problem with badly designed string stripping
 
 # set the alignment value
 alignment=16
 
-# bitfield names to be ignored #TODO: support regex only? (which dialect?)
-ignore=padding*,dummy*,doNotCare* 
+# bitfield names to be ignored 
+#TODO: support regex only? (which dialect?)
+ignore=padding*,dummy*,doNotCare*  
+#TODO: Also cannot be found - some bad design in regex - find that out...
 
 # indent 
 indent="  "
 
 # padding type
-padding=unsigned
+padding="unsigned"
 
 # this whould not be searched by C++ engine 
-files=*.h,*.c
+files=*.h,*.c #TODO: Cannot be found...
 
 #prefix of type name to be searched
-prefix=typedef
+prefix="typedef"
 
 #do or do not mirror
 mirror=true
