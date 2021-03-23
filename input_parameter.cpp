@@ -11,11 +11,11 @@
 #include "input_parameter_value.hpp"
 
 
-InputParameterValue* InputParameter::GetParameterValue(InputParameterName name)
+std::string InputParameter::GetParameterValue(InputParameterName name)
 //would be called by the getting functionality, then, returning
 // the union which would be implicitly converted to a value...
 {
-	return (InputParameter::parameters[name].parameterValue_mp);
+	return (InputParameter::parameters[name].parameterValue_mp)->GetParameterValue(name);
 	//This would return the pointer to a InputParameterValue
 	// And we know that this is a polimorphic object...
 }
@@ -223,6 +223,11 @@ InputParameter::ParamArray InputParameter::parameters = //TODO: Remove const, ma
 InputParameterName::operator unsigned() const
 {
 	return elemIndex_m;
+}
+
+InputParameterName::operator std::string() const
+{
+	return name_m;
 }
 
 

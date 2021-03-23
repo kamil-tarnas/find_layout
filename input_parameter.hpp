@@ -19,6 +19,7 @@ public:
 	// Implicit, for switch..case conversions and returning index
 	// in the ParamArray
 	operator unsigned() const;
+	operator std::string() const;
 
 	InputParameterType GetType() const;
 
@@ -75,7 +76,7 @@ public:
 //	}
 
 	//constexpr?
-	static InputParameterValue* GetParameterValue(InputParameterName name);
+	static std::string GetParameterValue(InputParameterName name);
 
 	InputParameter(std::string parameterName, std::string parameterValue);
 

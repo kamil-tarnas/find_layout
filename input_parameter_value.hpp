@@ -44,6 +44,8 @@ private:
   T m_value;
 };
 
+
+[[left]] collect the types and call appropriate c-tor...
 class Derived : public Variable<int>
 {
 public:

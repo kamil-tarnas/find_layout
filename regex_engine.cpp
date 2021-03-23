@@ -577,13 +577,14 @@ void OverwriteInputParams()
 	// Type erasure?
 	// All of that are string parameters
 
-	InputParameterValue* ptr = InputParameter::GetParameterValue(std::string("preamble"));
-	preamble = ptr->GetParameterValue(std::string("preamble")) + "\n";
-	interamble = "#else\n";
-	postamble = "#endif\n";
+	// TODO: Eliminate the adding of + "\n" at the end of the parameters
+	// TODO: Avoid such conversions... have a parameter name <-> variable name matching..
+	preamble = InputParameter::GetParameterValue(std::string("preamble")) + "\n";
+	interamble = InputParameter::GetParameterValue(std::string("interamble")) + "\n";
+	postamble = InputParameter::GetParameterValue(std::string("postamble")) + "\n";
 
-	padding = "u16";
-	indent = "  ";
+	padding = InputParameter::GetParameterValue(std::string("padding"));
+	indent = InputParameter::GetParameterValue(std::string("indent"));
 }
 
 
